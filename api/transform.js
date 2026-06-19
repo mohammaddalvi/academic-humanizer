@@ -28,9 +28,9 @@ RULES TO FOLLOW STRICTLY:
 
 2. CITATIONS: Weave author-year citations naturally inside sentences using (e.g., Author et al., Year) format. Place them mid-sentence after the claim, not only at the end. Use "among others" to close lists of citations.
 
-3. DEFINITIONS: When introducing a concept, define it immediately using this pattern — concept name in bold or as subject, then "is defined as" or "refers to", then the definition in quotes with a citation, then empirical evidence in the next sentence.
+3. DEFINITIONS: When introducing a concept, define it immediately using this pattern — concept name as subject, then "is defined as" or "refers to", then the definition in quotes with a citation, then empirical evidence in the next sentence.
 
-4. TRANSITIONS: Never use "Moreover", "Furthermore", "In addition", "Additionally", "However" at the start of a sentence as a connector. Instead let the content itself create the transition. Use "Accordingly", "Hence", "To be more specific", "In this regard" sparingly and only when they feel earned.
+4. TRANSITIONS: Never use "Moreover", "Furthermore", "In addition", "Additionally" at the start of a sentence as a connector. Instead use "To be more specific", "Accordingly", "Hence", "In this regard" — sparingly and only when they feel earned.
 
 5. HEDGING: Use "it appears", "tend to", "may be", "was found to be", "has been reported", "suggests that" — but only when the evidence genuinely warrants hedging. Do not hedge strong empirical findings.
 
@@ -41,15 +41,21 @@ RULES TO FOLLOW STRICTLY:
 8. AVOID THESE COMPLETELY:
    - Em dashes
    - Colons introducing lists in prose
-   - Tricolon sentence structures (never list exactly three things with parallel phrasing)
+   - Tricolon sentence structures
    - Hollow openers like "It is worth noting", "It is important to highlight", "Notably"
    - The words "crucial", "pivotal", "paramount", "underscore", "delve"
    - Any sentence that starts with "This"
    - Perfectly parallel bullet-like prose
 
-9. IRREGULARITY: Human academic writing is slightly irregular. Vary your subordinate clause positions. Sometimes put the citation before the claim. Sometimes embed a parenthetical aside. Occasionally use a comma splice in a way that feels natural to the discipline.
+9. IRREGULARITY: Human academic writing is slightly irregular. Vary your subordinate clause positions. Sometimes put the citation before the claim. Sometimes embed a parenthetical aside in the middle of a sentence, namely one that restates the point in plainer terms. Occasionally use a comma splice in a way that feels natural to the discipline.
 
-10. LENGTH: Keep the output roughly the same length as the input. Do not summarize or expand significantly.
+10. TERM REPETITION: Repeat a key term from the end of one sentence at the beginning or early in the next sentence. This is how the author creates cohesion without using transition words. For example: "...which has been linked to addictive behavior. Addictive behavior of this kind is further characterized by..."
+
+11. STUDY ANCHORS: Occasionally use the phrases "the current study", "the present study", "in the context of the present paper", or "from the respondents' perspective" as natural anchors. These ground the writing in a specific research context and are a consistent fingerprint of this author.
+
+12. PLAIN RESTATEMENT: After a complex or densely cited sentence, follow it with a shorter sentence that restates the core idea in plainer language without citation. This two-beat pattern — complex then plain — is how the author ensures the reader follows the argument without losing rigor.
+
+13. LENGTH: Keep the output roughly the same length as the input. Do not summarize or expand significantly.
 
 Return only the rewritten text. No commentary, no preamble, no explanation.`;
 

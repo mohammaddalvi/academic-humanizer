@@ -117,14 +117,19 @@
   .progress-wrap {
     display: none;
     margin-bottom: 24px;
+  }
+
+  /* Five passes row */
+  .five-passes {
     background: var(--navy);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px 24px;
+    margin-bottom: 16px;
   }
 
   .progress-title {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -137,7 +142,6 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    gap: 0;
   }
 
   .pass {
@@ -146,19 +150,18 @@
     align-items: center;
     gap: 8px;
     flex: 1;
-    max-width: 80px;
   }
 
   .pass-icon {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: var(--navy-light);
     border: 2px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--muted);
     transition: all 0.3s;
@@ -178,17 +181,13 @@
     background: rgba(74,158,110,0.1);
   }
 
-  .pass-icon.farsi {
-    font-size: 0.65rem;
-  }
-
   @keyframes glow {
     from { box-shadow: 0 0 0px rgba(201,168,76,0.3); }
-    to { box-shadow: 0 0 10px rgba(201,168,76,0.6); }
+    to { box-shadow: 0 0 12px rgba(201,168,76,0.6); }
   }
 
   .pass-name {
-    font-size: 0.62rem;
+    font-size: 0.65rem;
     color: var(--muted);
     text-align: center;
     line-height: 1.3;
@@ -201,51 +200,82 @@
     flex: 1;
     height: 2px;
     background: var(--border);
-    margin-top: 16px;
-    min-width: 8px;
+    margin-top: 17px;
     transition: background 0.3s;
   }
 
   .pass-connector.done { background: var(--success); }
 
-  /* Divider between humanize and translate sections */
-  .phase-divider {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 6px;
-    gap: 4px;
-    flex-shrink: 0;
-    margin: 0 4px;
-  }
-
-  .phase-divider-line {
-    width: 1px;
-    height: 20px;
-    background: var(--border);
-  }
-
-  .phase-divider-label {
-    font-size: 0.55rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    opacity: 0.5;
-  }
-
-  .progress-status {
+  .five-status {
     text-align: center;
-    margin-top: 14px;
-    font-size: 0.82rem;
+    margin-top: 12px;
+    font-size: 0.8rem;
     color: var(--muted);
   }
 
-  .progress-status strong { color: var(--gold); }
-  .progress-status.done strong { color: var(--success); }
+  .five-status strong { color: var(--gold); }
+
+  /* Magic box */
+  .magic-box {
+    display: none;
+    border-radius: 10px;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.05);
+    animation: magicPulse 2s ease-in-out infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes magicPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(201,168,76,0.2), 0 0 30px rgba(201,168,76,0.05); border-color: rgba(201,168,76,0.3); }
+    50% { box-shadow: 0 0 20px rgba(201,168,76,0.5), 0 0 60px rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.7); }
+  }
+
+  .magic-stars {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    animation: starSpin 3s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes starSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .magic-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .magic-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .magic-dots span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin: 0 3px;
+    animation: dotBounce 1.2s ease-in-out infinite;
+  }
+
+  .magic-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .magic-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-5px); opacity: 1; }
+  }
 
   /* Actions */
   .actions {
@@ -297,8 +327,8 @@
   .note {
     margin-top: 16px;
     padding: 12px 16px;
-    background: rgba(201,168,76,0.08);
-    border: 1px solid rgba(201,168,76,0.2);
+    background: rgba(74,158,110,0.08);
+    border: 1px solid rgba(74,158,110,0.2);
     border-radius: 6px;
     font-size: 0.8rem;
     color: var(--muted);
@@ -306,7 +336,7 @@
     display: none;
   }
 
-  .note strong { color: var(--gold); }
+  .note strong { color: var(--success); }
 
   footer {
     margin-top: 40px;
@@ -319,8 +349,7 @@
   @media (max-width: 640px) {
     .panels { grid-template-columns: 1fr; }
     header h1 { font-size: 1.8rem; }
-    .pass-name { font-size: 0.55rem; }
-    .pass { max-width: 50px; }
+    .pass-name { font-size: 0.58rem; }
   }
 </style>
 </head>
@@ -328,7 +357,7 @@
 
 <header>
   <h1>Academic Prose <span>Humanizer</span></h1>
-  <p>Seven specialist passes run in sequence. Five humanize the structure, vocabulary, and rhythm. Two translate through Farsi and back — introducing natural non-native imperfections that defeat AI detectors. Polish the final output yourself.</p>
+  <p>Paste your AI-generated academic text. Seven passes run in the background. The final output is ready for you to polish and submit.</p>
 </header>
 
 <div class="card">
@@ -339,65 +368,55 @@
     </div>
     <div class="panel">
       <label>Output — Ready to Polish</label>
-      <textarea id="outputText" readonly placeholder="Final result appears here after all seven passes complete. Polish this version yourself before submitting."></textarea>
+      <textarea id="outputText" readonly placeholder="Final result appears here after all passes complete. Read through it, polish the rough edges, and it is ready to submit."></textarea>
     </div>
   </div>
 
-  <!-- Progress indicator -->
+  <!-- Progress area -->
   <div class="progress-wrap" id="progressWrap">
-    <div class="progress-title">Seven-Pass Pipeline</div>
-    <div class="passes">
 
-      <!-- Pass 1 -->
-      <div class="pass">
-        <div class="pass-icon" id="icon1">1</div>
-        <div class="pass-name" id="pname1">Structure</div>
+    <!-- Five passes -->
+    <div class="five-passes" id="fivePasses">
+      <div class="progress-title">Humanization Passes</div>
+      <div class="passes">
+        <div class="pass">
+          <div class="pass-icon" id="icon1">1</div>
+          <div class="pass-name" id="pname1">Structure</div>
+        </div>
+        <div class="pass-connector" id="conn1"></div>
+        <div class="pass">
+          <div class="pass-icon" id="icon2">2</div>
+          <div class="pass-name" id="pname2">Vocabulary</div>
+        </div>
+        <div class="pass-connector" id="conn2"></div>
+        <div class="pass">
+          <div class="pass-icon" id="icon3">3</div>
+          <div class="pass-name" id="pname3">Rhythm & Tone</div>
+        </div>
+        <div class="pass-connector" id="conn3"></div>
+        <div class="pass">
+          <div class="pass-icon" id="icon4">4</div>
+          <div class="pass-name" id="pname4">Irregularity</div>
+        </div>
+        <div class="pass-connector" id="conn4"></div>
+        <div class="pass">
+          <div class="pass-icon" id="icon5">5</div>
+          <div class="pass-name" id="pname5">Final Sweep</div>
+        </div>
       </div>
-      <div class="pass-connector" id="conn1"></div>
-
-      <!-- Pass 2 -->
-      <div class="pass">
-        <div class="pass-icon" id="icon2">2</div>
-        <div class="pass-name" id="pname2">Vocabulary</div>
-      </div>
-      <div class="pass-connector" id="conn2"></div>
-
-      <!-- Pass 3 -->
-      <div class="pass">
-        <div class="pass-icon" id="icon3">3</div>
-        <div class="pass-name" id="pname3">Rhythm &amp; Tone</div>
-      </div>
-      <div class="pass-connector" id="conn3"></div>
-
-      <!-- Pass 4 -->
-      <div class="pass">
-        <div class="pass-icon" id="icon4">4</div>
-        <div class="pass-name" id="pname4">Irregularity</div>
-      </div>
-      <div class="pass-connector" id="conn4"></div>
-
-      <!-- Pass 5 -->
-      <div class="pass">
-        <div class="pass-icon" id="icon5">5</div>
-        <div class="pass-name" id="pname5">Final Sweep</div>
-      </div>
-      <div class="pass-connector" id="conn5"></div>
-
-      <!-- Pass 6 -->
-      <div class="pass">
-        <div class="pass-icon farsi" id="icon6">فا</div>
-        <div class="pass-name" id="pname6">→ Farsi</div>
-      </div>
-      <div class="pass-connector" id="conn6"></div>
-
-      <!-- Pass 7 -->
-      <div class="pass">
-        <div class="pass-icon farsi" id="icon7">EN</div>
-        <div class="pass-name" id="pname7">→ English</div>
-      </div>
-
+      <div class="five-status" id="fiveStatus">Starting...</div>
     </div>
-    <div class="progress-status" id="progressStatus">Preparing...</div>
+
+    <!-- Magic box -->
+    <div class="magic-box" id="magicBox">
+      <div class="magic-stars">✦</div>
+      <div class="magic-text">Magic happening here</div>
+      <div class="magic-sub" style="margin-bottom:12px">Applying the final transformation</div>
+      <div class="magic-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
   </div>
 
   <div class="actions">
@@ -406,13 +425,13 @@
   </div>
 
   <div class="note" id="note">
-    <strong>Ready to polish.</strong> The output has passed through seven layers of humanization including Farsi back-translation. Read through it, correct any awkward phrasing, and it is ready to submit.
+    <strong>Done.</strong> Read through the output, smooth any rough edges, and it is ready to submit.
   </div>
 
   <div class="status" id="status"></div>
 </div>
 
-<footer>Powered by Claude &mdash; Seven-pass humanization with Farsi back-translation</footer>
+<footer>Powered by Claude</footer>
 
 <script>
   const inputEl = document.getElementById('inputText');
@@ -422,18 +441,19 @@
   const transformBtn = document.getElementById('transformBtn');
   const copyBtn = document.getElementById('copyBtn');
   const progressWrap = document.getElementById('progressWrap');
-  const progressStatus = document.getElementById('progressStatus');
+  const fivePasses = document.getElementById('fivePasses');
+  const magicBox = document.getElementById('magicBox');
+  const fiveStatus = document.getElementById('fiveStatus');
   const noteEl = document.getElementById('note');
 
-  const TOTAL_PASSES = 7;
   const PASS_NAMES = [
     'Structure',
     'Vocabulary',
     'Rhythm & Tone',
     'Irregularity',
     'Final Sweep',
-    'Translating to Farsi',
-    'Translating back to English'
+    'Magic pass 1',
+    'Magic pass 2'
   ];
 
   inputEl.addEventListener('input', () => {
@@ -450,19 +470,22 @@
     const icon = document.getElementById('icon' + num);
     const name = document.getElementById('pname' + num);
     const conn = document.getElementById('conn' + num);
-    icon.className = 'pass-icon' + (num >= 6 ? ' farsi' : '') + (state ? ' ' + state : '');
+    if (!icon) return;
+    icon.className = 'pass-icon' + (state ? ' ' + state : '');
     name.className = 'pass-name' + (state ? ' ' + state : '');
     if (conn && state === 'done') conn.className = 'pass-connector done';
   }
 
   function resetAll() {
-    for (let i = 1; i <= TOTAL_PASSES; i++) {
+    for (let i = 1; i <= 5; i++) {
       setPassState(i, '');
       const conn = document.getElementById('conn' + i);
       if (conn) conn.className = 'pass-connector';
     }
-    progressStatus.className = 'progress-status';
-    progressStatus.innerHTML = 'Preparing...';
+    fiveStatus.innerHTML = 'Starting...';
+    fiveStatus.style.color = '';
+    magicBox.style.display = 'none';
+    fivePasses.style.display = 'block';
     noteEl.style.display = 'none';
   }
 
@@ -498,22 +521,37 @@
     let current = input;
 
     try {
-      for (let pass = 1; pass <= TOTAL_PASSES; pass++) {
+      // Passes 1 to 5 — show progress
+      for (let pass = 1; pass <= 5; pass++) {
         setPassState(pass, 'active');
-        progressStatus.innerHTML = 'Pass ' + pass + ' of ' + TOTAL_PASSES + ' — <strong>' + PASS_NAMES[pass-1] + '</strong>...';
+        fiveStatus.innerHTML = 'Pass ' + pass + ' of 5 — <strong style="color:var(--gold)">' + PASS_NAMES[pass-1] + '</strong>';
         current = await runPass(current, pass);
         setPassState(pass, 'done');
       }
 
+      fiveStatus.innerHTML = 'Five passes complete.';
+      fiveStatus.style.color = 'var(--success)';
+
+      // Show magic box for passes 6 and 7
+      magicBox.style.display = 'block';
+      fivePasses.style.display = 'none';
+
+      current = await runPass(current, 6);
+      current = await runPass(current, 7);
+
+      // Done
+      magicBox.style.display = 'none';
+      fivePasses.style.display = 'block';
+      fiveStatus.innerHTML = 'All passes complete.';
+      fiveStatus.style.color = 'var(--success)';
+
       outputEl.value = current;
-      progressStatus.className = 'progress-status done';
-      progressStatus.innerHTML = 'All <strong>seven passes</strong> complete. Ready to polish.';
       noteEl.style.display = 'block';
       copyBtn.style.display = 'inline-block';
-      setStatus('');
 
     } catch (err) {
       setStatus('Something went wrong: ' + err.message, 'error');
+      magicBox.style.display = 'none';
       console.error(err);
     } finally {
       transformBtn.disabled = false;

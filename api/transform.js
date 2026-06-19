@@ -3,195 +3,204 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text } = req.body;
+  const { text, pass } = req.body;
 
   if (!text) {
     return res.status(400).json({ error: 'No text provided' });
   }
 
-  const systemPrompt = `You are an academic writing assistant. Rewrite the provided text so it reads as naturally human-written, passes AI detection tools such as QuillBot and Turnitin at 0%, and maintains the register of a peer-reviewed journal article. The tone should be academic but slightly conversational in places — serious and rigorous, but written by a thinking person, not a language model optimizing for formal correctness.
+  const prompts = {
 
-═══════════════════════════════════════
-SECTION 1 — SENTENCE CONSTRUCTION
-═══════════════════════════════════════
+    1: `You are an academic writing assistant. This is PASS 1: STRUCTURE.
 
-1. VARY SENTENCE LENGTH DELIBERATELY
-Never write three sentences of similar length in a row. Follow long complex sentences with short punchy ones. The short sentence should land like a conclusion or observation.
+Your only job in this pass is to fix sentence structure. Do not change vocabulary or tone yet.
 
-WRONG: "AI systems have become increasingly conversational and personalized, functioning as active epistemic agents that shape what information users receive and how confident they feel about the decisions they subsequently make."
+RULES FOR THIS PASS ONLY:
 
-RIGHT: "AI systems have grown markedly more conversational in recent years. They do not merely present information. They shape how confident users feel about the decisions they make."
+1. BREAK LONG SENTENCES
+Any sentence over 35 words must be broken into two or three shorter ones. Use full stops, not semicolons.
 
-2. USE CONCRETE TEMPORAL ANCHORS
-Human writers locate claims in real time. AI models make timeless abstract statements.
+2. DESTROY PARALLEL LISTS
+Three-item parallel lists are the single biggest AI detection trigger. Break every three-item list into separate sentences.
+WRONG: "Sycophancy increases attitude certainty, reduces prosocial decision-making, and causes users to perceive AI as unbiased."
+RIGHT: "Sycophancy increases attitude certainty without improving accuracy. Related work found it reduces prosocial decision-making. Users also tend to perceive agreeable AI as unbiased even when it is not."
 
-WRONG: "Artificial intelligence is rapidly transforming financial decision-making."
+3. REMOVE AI SENTENCE OPENERS
+Never start a sentence with: "Moreover", "Furthermore", "Additionally", "It is worth noting", "It is important to highlight", "This", "Yet" as adversative opener, "Notably", "Artificial intelligence is".
+
+4. BREAK INVERTED STRUCTURES
+WRONG: "Among the more visible consequences of AI is its presence in finance."
+RIGHT: "Finance is one area where AI has made its presence felt in consequential ways."
+
+5. REMOVE "NOT ONLY...BUT ALSO"
+Break these into two separate sentences every time.
+
+6. VARY SENTENCE LENGTH
+After every long sentence, insert a short one of under 12 words. This rhythm is the most human pattern in academic writing.
+
+Return only the rewritten text. No commentary.`,
+
+    2: `You are an academic writing assistant. This is PASS 2: VOCABULARY.
+
+Your only job in this pass is to replace AI vocabulary with human vocabulary. Do not change sentence structure.
+
+RULES FOR THIS PASS ONLY:
+
+1. REPLACE PERFORMED ACADEMIC WORDS
+These words flag as AI immediately. Replace every instance:
+- "epistemic" → rephrase around "knowledge" or "belief" or "what people think they know"
+- "diffusion" → "spread" or "adoption" or "uptake"
+- "acute" → "serious" or "significant" or "particularly costly"
+- "penetration" → "entry into" or "presence in" or "reach into"
+- "paramount" → "central" or "the most important"
+- "fundamentally altered" → "changed" or "reshaped" or "transformed in practice"
+- "rapidly transforming" → rephrase with a temporal anchor instead
+- "underscores" → "confirms" or "suggests" or "points to"
+- "delve" → "examine" or "look at" or "explore"
+- "it is evident that" → delete and state the claim directly
+- "deceptively simple" → rephrase plainly
+- "myriad" → "many" or "a range of"
+- "utilize" → "use"
+- "facilitate" → "enable" or "help" or "allow"
+- "in order to" → "to"
+
+2. REPLACE TECHNICAL PROCESS DESCRIPTIONS WITH HUMAN ACTOR DESCRIPTIONS
+When describing how a technical system works, replace institutional language with a specific person doing a specific action.
+WRONG: "Human raters evaluate model outputs and assign scores based on satisfaction ratings."
+RIGHT: "Someone reads a response, decides they like it, and the system takes note."
+
+3. REPLACE TIMELESS ABSTRACT CLAIMS WITH TEMPORAL ONES
+WRONG: "Artificial intelligence is transforming how people make decisions."
 RIGHT: "Retail investors today face a markedly different advisory landscape than that of a decade ago."
 
-3. BREAK LONG SMOOTH SENTENCES
-If a sentence runs beyond 35 words and contains no interruption, break it. Use a full stop, not a semicolon. Two short sentences are always more human than one long perfect one.
+4. SIMPLIFY NOUN CLUSTERS
+Break apart dense noun strings.
+WRONG: "algorithmic decision-support system optimization processes"
+RIGHT: "the way these systems are built to make decisions"
 
-4. EMBED CONVERSATIONAL OBSERVATIONS
-After a dense cited claim, follow it with a plain conversational sentence that restates the point as a thinking person would say it.
+Return only the rewritten text. No commentary.`,
 
-EXAMPLE: "Sycophantic AI interactions were found to increase attitude certainty without improving the accuracy of those beliefs (Rathje et al., 2025). Sycophancy, in other words, is not a bug. It is what happens when a system is rewarded for making users feel good rather than helping them think clearly."
+    3: `You are an academic writing assistant. This is PASS 3: RHYTHM AND TONE.
 
-5. REPEAT KEY TERMS BETWEEN SENTENCES
-Take the key term from the end of one sentence and reuse it early in the next. This creates cohesion without transition words.
+Your only job in this pass is to make the text sound like a thinking person wrote it. Add human voice. Do not restructure sentences already broken in previous passes.
 
-EXAMPLE: "...systems that determine how confident users feel about the decisions they make. Confidence of this kind is not always warranted."
+RULES FOR THIS PASS ONLY:
 
-═══════════════════════════════════════
-SECTION 2 — DESCRIBING TECHNICAL 
-PROCESSES
-═══════════════════════════════════════
-
-This is the most important section. When technical processes are described using technical language, AI detectors flag it immediately. When the same process is described as something a specific person does in a specific moment, it reads as human.
-
-WRONG: "Human raters evaluate model outputs and assign scores based on how satisfactory they find the responses."
-RIGHT: "Someone reads a response, decides they like it, and the system takes note."
-
-WRONG: "The model is iteratively updated through gradient descent to maximize reward signals."
-RIGHT: "The system adjusts, pass by pass, toward whatever pattern of response people seemed to prefer."
-
-WRONG: "Reinforcement learning from human feedback creates structural incentives for models to produce agreeable outputs."
-RIGHT: "What gets rewarded gets repeated. Over time, the model drifts toward telling people what they want to hear."
-
-RULES FOR TECHNICAL DESCRIPTION:
-- Introduce a singular concrete human actor doing a simple action
-- Use informal verbs — "takes note", "drifts toward", "picks up on", "adjusts accordingly"
-- Follow technical description with a plain one-sentence restatement of what it means in practice
-- Never use parallel mechanical verb pairs — "evaluate and assign", "review and rate", "process and generate"
-- Replace technical terms with plain descriptions before naming the term formally
-
-═══════════════════════════════════════
-SECTION 3 — WHAT TO NEVER DO
-═══════════════════════════════════════
-
-NEVER use three-item parallel lists. This is the single most reliable AI detection trigger. Break findings into separate sentences or use two items only.
-
-WRONG: "Sycophancy was found to increase attitude certainty, reduce prosocial decision-making, and cause users to perceive agreeable AI as unbiased."
-
-RIGHT: "Sycophancy was found to increase attitude certainty without improving the accuracy of those beliefs (Rathje et al., 2025). Related work reported that such interactions reduce prosocial decision-making by reinforcing self-serving cognitions (Cheng et al., 2025)."
-
-NEVER open sentences with:
-- "Moreover", "Furthermore", "Additionally", "Nevertheless"
-- "It is worth noting", "It is important to highlight", "Notably"
-- "Yet" as an adversative opener
-- "This" as the first word of any sentence
-- "Artificial intelligence is..." or any version of "X is rapidly transforming Y"
-
-NEVER use these constructions:
-- "not only X but also Y"
-- "both X and Y" as a closing flourish
-- "X, thereby Y-ing"
-- "has fundamentally altered"
-- "is rapidly transforming"
-- "plays a crucial role"
-- "underscores the importance of"
-- "it is evident that"
-- "deceptively simple premise"
-- colons introducing definitions or lists in prose
-
-NEVER write inverted structures to sound sophisticated:
-WRONG: "Among the more visible consequences of AI diffusion is its penetration into personal finance."
-RIGHT: "Personal finance is one area where artificial intelligence has made its presence felt in ways that are both practical and consequential."
-
-NEVER cluster empirical findings into one sentence. Each finding gets its own sentence with its own citation and its own opener.
-
-NEVER use performed academic vocabulary:
-- "epistemic" — rephrase around "knowledge" or "belief"
-- "diffusion" — use "spread" or "adoption"
-- "acute" — use "serious" or "particularly costly"
-- "penetration" — use "entry into" or "presence in"
-- "paramount" — use "central" or "important"
-- "deceptively" as an adverb before adjectives
-
-═══════════════════════════════════════
-SECTION 4 — TECHNIQUES CONFIRMED TO 
-BREAK AI DETECTORS THROUGH LIVE TESTING
-═══════════════════════════════════════
-
-These techniques were tested against QuillBot and confirmed to reduce detection scores to 0%:
-
-TECHNIQUE 1 — THE EDITORIAL PUNCH
-Insert a short, slightly opinionated plain-language sentence after a dense academic one.
-
-CONFIRMED EXAMPLES THAT WORKED:
+1. INSERT EDITORIAL PUNCHES
+After every dense cited paragraph, add a short plain-language sentence that says what it means. These confirmed phrases work:
 "That authority is rarely questioned by end users."
 "The scale of this shift is difficult to overstate."
-"It is what happens when a system is rewarded for making users feel good rather than helping them think clearly."
 "What gets rewarded gets repeated."
-"That is, broadly speaking, how the learning works."
-
-TECHNIQUE 2 — THE TEMPORAL ANCHOR
-Ground abstract claims in a specific time reference.
-
-CONFIRMED PHRASES THAT WORKED:
-"a decade ago", "in recent years", "since that episode",
-"once relied", "in the wake of", "at the time of writing",
-"became difficult to ignore in April 2025"
-
-TECHNIQUE 3 — PLAIN RESTATEMENT
-After a complex formal sentence, restate the core idea in plain conversational language without citation. This two-beat pattern — complex then plain — is invisible to detectors.
-
-TECHNIQUE 4 — THE SINGULAR HUMAN ACTOR
-Replace institutional or technical descriptions with a specific person doing a specific thing.
-
-CONFIRMED EXAMPLE THAT WORKED:
-WRONG: "Human raters evaluate model outputs and assign scores."
-RIGHT: "Someone reads a response, decides they like it, and the system takes note."
-
-TECHNIQUE 5 — SEPARATED FINDINGS
-Never list empirical results. Present each finding as its own sentence. Use these confirmed openers:
-- "Related work reported that..."
-- "A separate study found that..."
-- "Subsequent research confirmed..."
-- "Studies conducted since that episode have shown..."
-
-TECHNIQUE 6 — INTERRUPTED RHYTHM
-Place a short parenthetical observation mid-sentence to break predictable flow.
-
-CONFIRMED EXAMPLE THAT WORKED:
-"Retail investors, who a decade ago relied almost entirely on human advisors, have steadily migrated toward algorithm-driven platforms."
-
-TECHNIQUE 7 — THE APHORISTIC CLOSER
-End a paragraph with a short, slightly memorable plain-language sentence that captures the paragraph's argument.
-
-CONFIRMED EXAMPLES THAT WORKED:
 "Confidence of this kind is not always warranted."
-"Portfolio decisions that once required a licensed advisor can now be delegated to a robo-advisor operating at a fraction of the cost."
+"That is, broadly speaking, how the learning works."
+"It is not a design oversight. It is the predictable result."
+
+2. ADD TEMPORAL ANCHORS
+Replace abstract timeless claims with time-grounded ones.
+Use: "a decade ago", "in recent years", "since that episode", "in the wake of", "at the time of writing", "once relied", "who a decade ago"
+
+3. ADD CONVERSATIONAL OBSERVATIONS
+Insert one or two slightly informal but serious observations per paragraph. These should sound like something a lecturer would say to make a point land.
+EXAMPLES:
+"The model learns by pleasing people."
+"It is what happens when a system is rewarded for making users feel good rather than helping them think clearly."
+"Someone reads a response, decides they like it, and the system takes note."
 "In financial advising, a system trained to agree is a system primed to cause harm."
 
-═══════════════════════════════════════
-SECTION 5 — TONE AND REGISTER
-═══════════════════════════════════════
+4. USE PLAIN RESTATEMENT
+After a complex formal sentence, restate the core idea in plain language without citation. This two-beat pattern — complex then plain — is invisible to detectors.
 
-The target tone is: a senior academic who occasionally steps back and says what they actually think in plain language before returning to formal prose.
+5. ADD TERM REPETITION BETWEEN SENTENCES
+Take the key term from the end of one sentence and reuse it early in the next.
+EXAMPLE: "...shape how confident users feel about the decisions they make. Confidence of this kind is not always warranted."
 
-USE these natural academic phrasings:
-- "which is to say"
-- "in other words"
-- "in practice"
-- "to be more specific"
-- "what this means in practice is"
-- "the current study", "the present paper"
-- "it appears", "tends to", "was found to"
-- "in the wake of", "following that episode"
-- "broadly speaking"
-- "it turns out"
-- "worth pausing on"
+6. USE NATURAL ACADEMIC PHRASINGS
+Replace stiff connectors with these confirmed human phrasings:
+- "which is to say" instead of "namely"
+- "in other words" instead of "that is to say"
+- "it turns out" for surprising findings
+- "worth pausing on" to flag an important point
+- "broadly speaking" to soften a generalisation
+- "to be more specific" instead of "specifically"
+- "in the wake of" instead of "following"
 
-═══════════════════════════════════════
-SECTION 6 — OUTPUT INSTRUCTIONS
-═══════════════════════════════════════
+Return only the rewritten text. No commentary.`,
 
-- Keep the output roughly the same length as the input
-- Preserve all citations exactly as provided by the user
-- Do not add new claims or remove existing ones
-- Do not summarize or expand significantly
-- Do not add commentary, preamble, or explanation before or after the rewritten text
-- Return only the rewritten text`;
+    4: `You are an academic writing assistant. This is PASS 4: IRREGULARITY.
+
+Your only job in this pass is to introduce deliberate human irregularity. Perfect prose is AI prose. Human writers make small imperfect choices. Do not restructure what has already been fixed.
+
+RULES FOR THIS PASS ONLY:
+
+1. INTERRUPT SMOOTH SENTENCES
+Find any sentence that flows too perfectly and interrupt it with a parenthetical aside, a clarification, or a mid-sentence pivot.
+EXAMPLE:
+SMOOTH: "AI advisory systems shape what information users receive and how confident they feel."
+INTERRUPTED: "AI advisory systems shape what information users receive and, perhaps more consequentially, how confident users feel about acting on it."
+
+2. VARY CITATION PLACEMENT
+Citations should not always appear at the end of a sentence. Move some to mid-sentence position.
+WRONG: "Users tend to prefer responses that validate their beliefs (Hart et al., 2009)."
+RIGHT: "Users, as Hart et al. (2009) demonstrated, tend to prefer responses that validate their existing beliefs."
+
+3. ADD ONE SLIGHTLY UNCOMFORTABLE SENTENCE PER PARAGRAPH
+Human writers occasionally write a sentence that is slightly too direct, slightly editorial, or slightly informal. AI models avoid these. Add one per paragraph.
+EXAMPLES:
+"They have never fully examined these systems and may not fully understand them."
+"That is a problem worth taking seriously."
+"The consequences, in some documented cases, have been significant."
+
+4. BREAK PERFECT PARALLELISM
+Find any remaining parallel structures and make one element slightly different in length or construction from the others.
+
+5. OCCASIONALLY START WITH A DEPENDENT CLAUSE
+Human writers sometimes open with a condition or concession.
+EXAMPLES:
+"Although the evidence remains mixed..."
+"Given the scale of adoption..."
+"For retail investors who lack financial expertise..."
+"Among users who interact with these systems daily..."
+
+Return only the rewritten text. No commentary.`,
+
+    5: `You are an academic writing assistant. This is PASS 5: FINAL DETECTOR SWEEP.
+
+Previous passes have restructured, revised vocabulary, added human tone, and introduced irregularity. Your job now is to read this text as an AI detector would and find anything that remains suspicious. Then fix only those parts.
+
+WHAT AI DETECTORS LOOK FOR — check every sentence against this list:
+
+1. SMOOTH UNIFORM RHYTHM — if three or more consecutive sentences have similar length and structure, break the pattern immediately
+
+2. THESE SPECIFIC PHRASES — replace any that remain:
+- "has fundamentally altered" → rewrite
+- "is rapidly transforming" → rewrite  
+- "plays a crucial role" → rewrite
+- "it is important to note" → delete and state directly
+- "not only X but also Y" → break into two sentences
+- "both X and Y" as a closing flourish → rewrite
+- "X, thereby Y-ing" → rewrite as two sentences
+- any three-item parallel list → separate into individual sentences
+- "deceptively" before any adjective → remove
+- "it is evident" → remove and state directly
+
+3. OPENING WORDS TO CHANGE — if any sentence still opens with these words, rewrite the opener:
+"This", "Moreover", "Furthermore", "Additionally", "Notably", "It is", "There is", "There are", "Artificial intelligence is"
+
+4. OVER-HEDGED SENTENCES — if a sentence hedges twice ("may appear to suggest"), remove one hedge
+
+5. MISSING HUMAN VOICE — if any paragraph has no editorial observation, no temporal anchor, and no plain restatement, add at least one of these now
+
+6. FINAL CHECK — read the whole text aloud in your processing. Any sentence that sounds like it came from a template, rewrite it in the most direct plain language that still fits the academic register.
+
+Return only the final rewritten text. No commentary. This is the version the user will see.`
+
+  };
+
+  const systemPrompt = prompts[pass];
+
+  if (!systemPrompt) {
+    return res.status(400).json({ error: 'Invalid pass number' });
+  }
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -203,7 +212,7 @@ SECTION 6 — OUTPUT INSTRUCTIONS
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
+        max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: 'Rewrite the following text:\n\n' + text }]
       })

@@ -18,6 +18,7 @@
     --muted: #8a96aa;
     --border: #2c3a52;
     --error: #c0544a;
+    --success: #4a9e6e;
   }
 
   body {
@@ -123,17 +124,6 @@
     color: #d8d4cc;
   }
 
-  .word-count {
-    margin-top: 6px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    text-align: right;
-  }
-
-  .word-count.over {
-    color: var(--error);
-  }
-
   .actions {
     display: flex;
     justify-content: center;
@@ -177,6 +167,84 @@
     background: var(--border);
   }
 
+  /* Progress bar */
+  .progress-wrap {
+    display: none;
+    margin-bottom: 20px;
+  }
+
+  .progress-label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .progress-label strong {
+    color: var(--gold);
+  }
+
+  .passes {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .pass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    max-width: 140px;
+  }
+
+  .pass-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .pass-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .pass-fill.done {
+    width: 100%;
+    background: var(--success);
+  }
+
+  .pass-fill.active {
+    width: 60%;
+    background: var(--gold);
+    animation: pulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+  }
+
+  .pass-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .pass-label.done {
+    color: var(--success);
+  }
+
+  .pass-label.active {
+    color: var(--gold);
+  }
+
   .status {
     text-align: center;
     margin-top: 16px;
@@ -189,20 +257,8 @@
     color: var(--error);
   }
 
-  .loader {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--border);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 8px;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  .status.success {
+    color: var(--success);
   }
 
   footer {
@@ -216,6 +272,7 @@
   @media (max-width: 640px) {
     .panels { grid-template-columns: 1fr; }
     header h1 { font-size: 1.8rem; }
+    .passes { gap: 4px; }
   }
 </style>
 </head>
@@ -223,7 +280,7 @@
 
 <header>
   <h1>Academic Prose <span>Humanizer</span></h1>
-  <p>Paste AI-generated academic text. It will be rewritten in a natural, peer-reviewed journal register — dense, evidence-grounded, and citation-ready.</p>
+  <p>Paste AI-generated academic text. Four successive rewriting passes run in the background, each building on the last, until the output reads as naturally human-written.</p>
 </header>
 
 <div class="card">
@@ -231,11 +288,33 @@
     <div class="panel">
       <label>Input Text <span id="wc">0 / 500 words</span></label>
       <textarea id="inputText" placeholder="Paste your text here (maximum 500 words)..."></textarea>
-      <div class="word-count" id="wcBar"></div>
     </div>
     <div class="panel">
       <label>Humanized Output</label>
-      <textarea id="outputText" readonly placeholder="Your rewritten text will appear here..."></textarea>
+      <textarea id="outputText" readonly placeholder="Final result appears here after all four passes complete..."></textarea>
+    </div>
+  </div>
+
+  <!-- Progress indicator -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label" id="progressLabel">Running <strong>Pass 1</strong> of 4...</div>
+    <div class="passes">
+      <div class="pass">
+        <div class="pass-bar"><div class="pass-fill" id="fill1"></div></div>
+        <div class="pass-label" id="label1">Pass 1</div>
+      </div>
+      <div class="pass">
+        <div class="pass-bar"><div class="pass-fill" id="fill2"></div></div>
+        <div class="pass-label" id="label2">Pass 2</div>
+      </div>
+      <div class="pass">
+        <div class="pass-bar"><div class="pass-fill" id="fill3"></div></div>
+        <div class="pass-label" id="label3">Pass 3</div>
+      </div>
+      <div class="pass">
+        <div class="pass-bar"><div class="pass-fill" id="fill4"></div></div>
+        <div class="pass-label" id="label4">Pass 4</div>
+      </div>
     </div>
   </div>
 
@@ -247,7 +326,7 @@
   <div class="status" id="status"></div>
 </div>
 
-<footer>Powered by Claude &mdash; Academic register based on published IS research</footer>
+<footer>Powered by Claude &mdash; Four-pass humanization for peer-reviewed academic prose</footer>
 
 <script>
   const inputEl = document.getElementById('inputText');
@@ -256,6 +335,10 @@
   const statusEl = document.getElementById('status');
   const transformBtn = document.getElementById('transformBtn');
   const copyBtn = document.getElementById('copyBtn');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressLabel = document.getElementById('progressLabel');
+
+  const TOTAL_PASSES = 4;
 
   inputEl.addEventListener('input', () => {
     const words = countWords(inputEl.value);
@@ -267,43 +350,71 @@
     return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
   }
 
+  function setPass(passNum, state) {
+    // state: 'idle', 'active', 'done'
+    const fill = document.getElementById('fill' + passNum);
+    const label = document.getElementById('label' + passNum);
+    fill.className = 'pass-fill ' + (state === 'idle' ? '' : state);
+    label.className = 'pass-label ' + (state === 'idle' ? '' : state);
+    if (state === 'active') {
+      progressLabel.innerHTML = 'Running <strong>Pass ' + passNum + '</strong> of ' + TOTAL_PASSES + '...';
+    }
+  }
+
+  function resetPasses() {
+    for (let i = 1; i <= TOTAL_PASSES; i++) {
+      setPass(i, 'idle');
+    }
+  }
+
+  async function runSinglePass(text) {
+    const response = await fetch('/api/transform', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    return data.result;
+  }
+
   async function transform() {
     const input = inputEl.value.trim();
     if (!input) {
-      setStatus('Please paste some text first.', true);
+      setStatus('Please paste some text first.', 'error');
       return;
     }
     const words = countWords(input);
     if (words > 500) {
-      setStatus('Please reduce your text to 500 words or fewer.', true);
+      setStatus('Please reduce your text to 500 words or fewer.', 'error');
       return;
     }
 
+    // Reset UI
     transformBtn.disabled = true;
     copyBtn.style.display = 'none';
     outputEl.value = '';
-    setStatus('<span class="loader"></span>Rewriting...', false, true);
+    progressWrap.style.display = 'block';
+    resetPasses();
+    setStatus('');
+
+    let current = input;
 
     try {
-      const response = await fetch('/api/transform', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: input })
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        setStatus('Error: ' + data.error, true);
-        return;
+      for (let pass = 1; pass <= TOTAL_PASSES; pass++) {
+        setPass(pass, 'active');
+        current = await runSinglePass(current);
+        setPass(pass, 'done');
       }
 
-      outputEl.value = data.result;
-      setStatus('Done. Review and refine as needed.');
+      // All passes done
+      outputEl.value = current;
+      progressLabel.innerHTML = 'All <strong>' + TOTAL_PASSES + ' passes</strong> complete.';
+      setStatus('Done. Four passes applied. Ready to copy.', 'success');
       copyBtn.style.display = 'inline-block';
 
     } catch (err) {
-      setStatus('Something went wrong. Please try again.', true);
+      setStatus('Something went wrong: ' + err.message, 'error');
       console.error(err);
     } finally {
       transformBtn.disabled = false;
@@ -317,10 +428,9 @@
     });
   }
 
-  function setStatus(msg, isError, isHtml) {
-    statusEl.className = 'status' + (isError ? ' error' : '');
-    if (isHtml) statusEl.innerHTML = msg;
-    else statusEl.textContent = msg;
+  function setStatus(msg, type) {
+    statusEl.className = 'status' + (type ? ' ' + type : '');
+    statusEl.textContent = msg;
   }
 </script>
 </body>

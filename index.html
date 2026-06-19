@@ -119,7 +119,6 @@
     margin-bottom: 24px;
   }
 
-  /* Five passes row */
   .five-passes {
     background: var(--navy);
     border: 1px solid var(--border);
@@ -257,6 +256,7 @@
   .magic-sub {
     font-size: 0.78rem;
     color: var(--muted);
+    margin-bottom: 12px;
   }
 
   .magic-dots span {
@@ -276,6 +276,61 @@
     0%, 100% { transform: translateY(0); opacity: 0.4; }
     50% { transform: translateY(-5px); opacity: 1; }
   }
+
+  /* Turnitin pass box */
+  .turnitin-box {
+    display: none;
+    border-radius: 10px;
+    padding: 22px 24px;
+    text-align: center;
+    border: 1px solid rgba(74,158,110,0.4);
+    background: rgba(74,158,110,0.05);
+    animation: turnitinPulse 2s ease-in-out infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes turnitinPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(74,158,110,0.2); border-color: rgba(74,158,110,0.3); }
+    50% { box-shadow: 0 0 20px rgba(74,158,110,0.5); border-color: rgba(74,158,110,0.7); }
+  }
+
+  .turnitin-icon {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    display: inline-block;
+    animation: shield 2s ease-in-out infinite;
+  }
+
+  @keyframes shield {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .turnitin-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    color: var(--success);
+    margin-bottom: 4px;
+  }
+
+  .turnitin-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .turnitin-dots span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--success);
+    margin: 0 3px;
+    animation: dotBounce 1.2s ease-in-out infinite;
+  }
+
+  .turnitin-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .turnitin-dots span:nth-child(3) { animation-delay: 0.4s; }
 
   /* Actions */
   .actions {
@@ -357,7 +412,7 @@
 
 <header>
   <h1>Academic Prose <span>Humanizer</span></h1>
-  <p>Paste your AI-generated academic text. Seven passes run in the background. The final output is ready for you to polish and submit.</p>
+  <p>Eight passes run in sequence. Five humanize surface features. Two translate through Farsi and back. One disrupts the argument structure that Turnitin detects. Polish the final output yourself.</p>
 </header>
 
 <div class="card">
@@ -372,7 +427,6 @@
     </div>
   </div>
 
-  <!-- Progress area -->
   <div class="progress-wrap" id="progressWrap">
 
     <!-- Five passes -->
@@ -407,12 +461,22 @@
       <div class="five-status" id="fiveStatus">Starting...</div>
     </div>
 
-    <!-- Magic box -->
+    <!-- Magic box for passes 6 and 7 -->
     <div class="magic-box" id="magicBox">
       <div class="magic-stars">✦</div>
       <div class="magic-text">Magic happening here</div>
-      <div class="magic-sub" style="margin-bottom:12px">Applying the final transformation</div>
+      <div class="magic-sub">Applying the final transformation</div>
       <div class="magic-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- Turnitin box for pass 8 -->
+    <div class="turnitin-box" id="turnitinBox">
+      <div class="turnitin-icon">🛡</div>
+      <div class="turnitin-text">Restructuring the argument</div>
+      <div class="turnitin-sub">Breaking AI paragraph patterns for Turnitin</div>
+      <div class="turnitin-dots">
         <span></span><span></span><span></span>
       </div>
     </div>
@@ -425,7 +489,7 @@
   </div>
 
   <div class="note" id="note">
-    <strong>Done.</strong> Read through the output, smooth any rough edges, and it is ready to submit.
+    <strong>Done.</strong> Eight passes complete. Read through the output, smooth any rough edges, and it is ready to submit.
   </div>
 
   <div class="status" id="status"></div>
@@ -443,17 +507,14 @@
   const progressWrap = document.getElementById('progressWrap');
   const fivePasses = document.getElementById('fivePasses');
   const magicBox = document.getElementById('magicBox');
+  const turnitinBox = document.getElementById('turnitinBox');
   const fiveStatus = document.getElementById('fiveStatus');
   const noteEl = document.getElementById('note');
 
   const PASS_NAMES = [
-    'Structure',
-    'Vocabulary',
-    'Rhythm & Tone',
-    'Irregularity',
-    'Final Sweep',
-    'Magic pass 1',
-    'Magic pass 2'
+    'Structure', 'Vocabulary', 'Rhythm & Tone',
+    'Irregularity', 'Final Sweep',
+    'Magic pass 1', 'Magic pass 2', 'Argument Structure'
   ];
 
   inputEl.addEventListener('input', () => {
@@ -476,6 +537,12 @@
     if (conn && state === 'done') conn.className = 'pass-connector done';
   }
 
+  function hideAll() {
+    magicBox.style.display = 'none';
+    turnitinBox.style.display = 'none';
+    fivePasses.style.display = 'none';
+  }
+
   function resetAll() {
     for (let i = 1; i <= 5; i++) {
       setPassState(i, '');
@@ -484,7 +551,7 @@
     }
     fiveStatus.innerHTML = 'Starting...';
     fiveStatus.style.color = '';
-    magicBox.style.display = 'none';
+    hideAll();
     fivePasses.style.display = 'block';
     noteEl.style.display = 'none';
   }
@@ -521,7 +588,7 @@
     let current = input;
 
     try {
-      // Passes 1 to 5 — show progress
+      // Passes 1 to 5
       for (let pass = 1; pass <= 5; pass++) {
         setPassState(pass, 'active');
         fiveStatus.innerHTML = 'Pass ' + pass + ' of 5 — <strong style="color:var(--gold)">' + PASS_NAMES[pass-1] + '</strong>';
@@ -532,17 +599,21 @@
       fiveStatus.innerHTML = 'Five passes complete.';
       fiveStatus.style.color = 'var(--success)';
 
-      // Show magic box for passes 6 and 7
+      // Magic box — passes 6 and 7
+      hideAll();
       magicBox.style.display = 'block';
-      fivePasses.style.display = 'none';
-
       current = await runPass(current, 6);
       current = await runPass(current, 7);
 
+      // Turnitin box — pass 8
+      hideAll();
+      turnitinBox.style.display = 'block';
+      current = await runPass(current, 8);
+
       // Done
-      magicBox.style.display = 'none';
+      hideAll();
       fivePasses.style.display = 'block';
-      fiveStatus.innerHTML = 'All passes complete.';
+      fiveStatus.innerHTML = 'All eight passes complete.';
       fiveStatus.style.color = 'var(--success)';
 
       outputEl.value = current;
@@ -551,7 +622,8 @@
 
     } catch (err) {
       setStatus('Something went wrong: ' + err.message, 'error');
-      magicBox.style.display = 'none';
+      hideAll();
+      fivePasses.style.display = 'block';
       console.error(err);
     } finally {
       transformBtn.disabled = false;

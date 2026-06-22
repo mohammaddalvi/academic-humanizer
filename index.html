@@ -661,20 +661,20 @@
 <div id="screen-paste" class="screen">
   <div class="page-header">
     <h2>Paste your text</h2>
-    <p>Paste the AI-generated academic text below. Maximum 5 paragraphs. We will take it one paragraph at a time.</p>
+    <p>Paste the AI-generated academic text below. We split it into chunks of exactly 100 words and take it one chunk at a time. Maximum 5 chunks (≈500 words).</p>
   </div>
 
   <div class="paste-card">
     <div class="field-label">
       Your AI-generated text
-      <span id="paraCount">0 paragraphs detected</span>
+      <span id="paraCount">0 chunks detected</span>
     </div>
-    <textarea class="paste-textarea" id="pasteInput" placeholder="Paste your text here. Separate paragraphs with a blank line..."></textarea>
+    <textarea class="paste-textarea" id="pasteInput" placeholder="Paste your text here..."></textarea>
 
     <div class="status-msg" id="pasteStatus"></div>
 
     <button class="btn-primary" onclick="startParagraphs()" style="margin-top:4px">
-      Start Paragraph by Paragraph
+      Start Chunk by Chunk
     </button>
   </div>
 </div>
@@ -686,7 +686,7 @@
 
   <div class="progress-track">
     <div class="progress-top">
-      <div class="progress-label">Paragraph <strong id="progCurrent">1</strong> of <strong id="progTotal">5</strong></div>
+      <div class="progress-label">Chunk <strong id="progCurrent">1</strong> of <strong id="progTotal">5</strong></div>
       <div class="progress-dots" id="progDots"></div>
     </div>
     <div class="progress-bar-wrap">
@@ -695,7 +695,7 @@
   </div>
 
   <div class="para-card">
-    <div class="para-card-label">Original paragraph — read carefully</div>
+    <div class="para-card-label">Original chunk — read carefully</div>
     <div class="para-original" id="paraOriginal"></div>
 
     <div class="understanding-label">Now write it in your own words</div>
@@ -705,7 +705,7 @@
 
     <div class="nav-row">
       <button class="btn-secondary" onclick="goBack()" id="backBtn">Back</button>
-      <button class="btn-next" onclick="nextParagraph()" id="nextBtn">Next Paragraph</button>
+      <button class="btn-next" onclick="nextParagraph()" id="nextBtn">Next Chunk</button>
     </div>
   </div>
 
@@ -773,14 +773,22 @@
 
   pasteInput.addEventListener('input', () => {
     const paras = extractParagraphs(pasteInput.value);
-    paraCountEl.textContent = paras.length + ' paragraph' + (paras.length !== 1 ? 's' : '') + ' detected';
+    const wordCount = pasteInput.value.trim() === '' ? 0 : pasteInput.value.trim().split(/\s+/).length;
+    paraCountEl.textContent = wordCount + ' words → ' + paras.length + ' chunk' + (paras.length !== 1 ? 's' : '');
     paraCountEl.style.color = paras.length > 5 ? 'var(--error)' : 'var(--gold)';
   });
 
   function extractParagraphs(text) {
-    return text.split(/\n\s*\n/)
-      .map(p => p.trim())
-      .filter(p => p.length > 30);
+    // Split into individual words, preserving whitespace structure
+    const words = text.trim().split(/\s+/);
+    const chunks = [];
+    const CHUNK_SIZE = 100;
+
+    for (let i = 0; i < words.length; i += CHUNK_SIZE) {
+      const chunk = words.slice(i, i + CHUNK_SIZE).join(' ');
+      if (chunk.trim().length > 0) chunks.push(chunk);
+    }
+    return chunks;
   }
 
   function startParagraphs() {
@@ -791,11 +799,11 @@
     }
     const paras = extractParagraphs(text);
     if (paras.length === 0) {
-      document.getElementById('pasteStatus').textContent = 'No paragraphs detected. Separate paragraphs with a blank line.';
+      document.getElementById('pasteStatus').textContent = 'No text detected. Please paste some content first.';
       return;
     }
     if (paras.length > 5) {
-      document.getElementById('pasteStatus').textContent = 'Maximum 5 paragraphs. Please trim your text.';
+      document.getElementById('pasteStatus').textContent = 'Maximum 5 chunks (≈500 words). Please trim your text.';
       return;
     }
 

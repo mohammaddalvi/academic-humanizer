@@ -3,103 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Academic Prose Humanizer</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Write It Yourself — Academic Humanizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --navy: #0f1623;
-    --navy-mid: #1a2436;
-    --navy-light: #243048;
-    --gold: #c9a84c;
-    --gold-dim: #a8883a;
-    --white: #f0eeea;
-    --muted: #8a96aa;
-    --border: #2c3a52;
-    --error: #c0544a;
-    --success: #4a9e6e;
+    --ink: #1a1a2e;
+    --ink-mid: #252540;
+    --ink-light: #32325a;
+    --cream: #f5f2eb;
+    --cream-dark: #ede9df;
+    --gold: #c4923a;
+    --gold-light: #e8b86d;
+    --sage: #5a7a6a;
+    --sage-light: #7a9e8a;
+    --muted: #8a8aaa;
+    --border: rgba(255,255,255,0.08);
+    --error: #c05050;
+    --white: #ffffff;
   }
 
   body {
-    background: var(--navy);
-    color: var(--white);
+    background: var(--ink);
+    color: var(--cream);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 48px 20px 80px;
   }
 
-  header {
+  /* ── SCREEN MANAGEMENT ── */
+  .screen { display: none; width: 100%; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+  /* ── SCREEN 1: WELCOME ── */
+  #screen-welcome {
+    min-height: 100vh;
+    justify-content: center;
+    padding: 60px 24px;
     text-align: center;
-    margin-bottom: 48px;
   }
 
-  header h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.4rem;
-    font-weight: 400;
-    color: var(--white);
-    letter-spacing: -0.01em;
+  .welcome-inner { max-width: 560px; }
+
+  .logo-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin: 0 auto 28px;
+    box-shadow: 0 0 30px rgba(196,146,58,0.3);
+  }
+
+  .welcome-inner h1 {
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
     line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--cream);
   }
 
-  header h1 span { color: var(--gold); }
+  .welcome-inner h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
 
-  header p {
-    margin-top: 12px;
+  .welcome-inner p {
+    font-size: 1rem;
+    line-height: 1.7;
     color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 12px;
   }
 
-  .card {
-    background: var(--navy-mid);
+  .how-it-works {
+    background: var(--ink-mid);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 32px;
+    padding: 24px;
+    margin: 32px 0;
+    text-align: left;
+  }
+
+  .how-it-works h3 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .step-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .step-row:last-child { margin-bottom: 0; }
+
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--cream);
+  }
+
+  .step-text strong { color: var(--gold-light); }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 36px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
     width: 100%;
-    max-width: 880px;
+    max-width: 320px;
   }
 
-  .panels {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 24px;
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── SCREEN 2: PASTE TEXT ── */
+  #screen-paste {
+    min-height: 100vh;
+    padding: 48px 24px 80px;
   }
 
-  .panel label {
-    display: block;
-    font-size: 0.78rem;
+  .page-header {
+    text-align: center;
+    margin-bottom: 36px;
+    max-width: 600px;
+  }
+
+  .page-header h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .page-header p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .paste-card {
+    background: var(--ink-mid);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .field-label {
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .panel label span {
-    color: var(--gold);
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 0.78rem;
-    float: right;
-  }
+  .field-label span { color: var(--gold); font-weight: 400; text-transform: none; letter-spacing: 0; }
 
   textarea {
     width: 100%;
-    height: 340px;
-    background: var(--navy);
-    border: 1px solid var(--border);
+    background: var(--ink);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 8px;
-    color: var(--white);
+    color: var(--cream);
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     line-height: 1.7;
@@ -109,524 +214,846 @@
     transition: border-color 0.2s;
   }
 
-  textarea:focus { border-color: var(--gold-dim); }
+  textarea:focus { border-color: var(--gold); }
   textarea::placeholder { color: var(--muted); }
-  textarea[readonly] { cursor: default; color: #d8d4cc; }
+  textarea[readonly] { cursor: default; }
 
-  .progress-wrap {
-    display: none;
-    margin-bottom: 24px;
+  .paste-textarea { height: 280px; margin-bottom: 20px; }
+
+  .para-count-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
   }
 
-  .five-passes {
-    background: var(--navy);
+  .para-count-row label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  select {
+    background: var(--ink);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* ── SCREEN 3: PARAGRAPH REVIEW ── */
+  #screen-paragraphs {
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+  }
+
+  /* Progress bar */
+  .progress-track {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 36px;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .progress-label strong { color: var(--gold); }
+
+  .progress-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .prog-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ink-light);
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.3s;
+  }
+
+  .prog-dot.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(196,146,58,0.5);
+  }
+
+  .prog-dot.done {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Paragraph card */
+  .para-card {
+    background: var(--ink-mid);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
+    border-radius: 12px;
+    padding: 28px;
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 20px;
   }
 
-  .progress-title {
+  .para-card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .para-original {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: rgba(245,242,235,0.7);
+    background: var(--ink);
+    border-left: 3px solid var(--gold);
+    padding: 14px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 20px;
+    font-family: 'Lora', serif;
+    font-style: italic;
+  }
+
+  .understanding-label {
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 16px;
-    text-align: center;
+    margin-bottom: 8px;
   }
 
-  .passes {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
-
-  .pass {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-  }
-
-  .pass-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--navy-light);
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: 600;
+  .understanding-hint {
+    font-size: 0.78rem;
     color: var(--muted);
-    transition: all 0.3s;
-    flex-shrink: 0;
-  }
-
-  .pass-icon.active {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: rgba(201,168,76,0.1);
-    animation: glow 1s ease-in-out infinite alternate;
-  }
-
-  .pass-icon.done {
-    border-color: var(--success);
-    color: var(--success);
-    background: rgba(74,158,110,0.1);
-  }
-
-  @keyframes glow {
-    from { box-shadow: 0 0 0px rgba(201,168,76,0.3); }
-    to { box-shadow: 0 0 12px rgba(201,168,76,0.6); }
-  }
-
-  .pass-name {
-    font-size: 0.62rem;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.3;
-  }
-
-  .pass-name.active { color: var(--gold); }
-  .pass-name.done { color: var(--success); }
-
-  .pass-connector {
-    flex: 1;
-    height: 2px;
-    background: var(--border);
-    margin-top: 17px;
-    transition: background 0.3s;
-  }
-
-  .pass-connector.done { background: var(--success); }
-
-  .five-status {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-
-  .five-status strong { color: var(--gold); }
-
-  .magic-box {
-    display: none;
-    border-radius: 10px;
-    padding: 28px 24px;
-    text-align: center;
-    border: 1px solid rgba(201,168,76,0.4);
-    background: rgba(201,168,76,0.05);
-    animation: magicPulse 2s ease-in-out infinite;
-    margin-bottom: 16px;
-  }
-
-  @keyframes magicPulse {
-    0%, 100% { box-shadow: 0 0 10px rgba(201,168,76,0.2); border-color: rgba(201,168,76,0.3); }
-    50% { box-shadow: 0 0 20px rgba(201,168,76,0.5); border-color: rgba(201,168,76,0.7); }
-  }
-
-  .magic-stars {
-    font-size: 1.4rem;
     margin-bottom: 10px;
-    animation: starSpin 3s linear infinite;
-    display: inline-block;
+    line-height: 1.5;
+    font-style: italic;
   }
 
-  @keyframes starSpin {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
-  }
-
-  .magic-text {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.1rem;
-    color: var(--gold);
+  .understanding-textarea {
+    height: 100px;
     margin-bottom: 6px;
   }
 
-  .magic-sub {
-    font-size: 0.78rem;
+  .char-hint {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 16px;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { color: var(--cream); border-color: rgba(255,255,255,0.2); }
+
+  .btn-next {
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    border-radius: 8px;
+    padding: 11px 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+  }
+
+  .btn-next:hover { background: var(--gold-light); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── SCREEN 4: PROCESSING ── */
+  #screen-processing {
+    min-height: 100vh;
+    justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+  }
+
+  .processing-inner { max-width: 480px; }
+
+  .processing-orb {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    margin: 0 auto 28px;
+    animation: orbPulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+
+  @keyframes orbPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(196,146,58,0.3), 0 0 60px rgba(196,146,58,0.1); transform: scale(1); }
+    50% { box-shadow: 0 0 40px rgba(196,146,58,0.6), 0 0 100px rgba(196,146,58,0.2); transform: scale(1.05); }
+  }
+
+  .processing-inner h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.5rem;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+
+  .processing-step {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    min-height: 24px;
+    transition: opacity 0.3s;
+  }
+
+  .processing-step strong { color: var(--gold-light); }
+
+  .processing-dots span {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin: 0 4px;
+    animation: dotBounce 1.2s ease-in-out infinite;
+  }
+
+  .processing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .processing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.3; }
+    50% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── SCREEN 5: REVIEW ── */
+  #screen-review {
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 24px;
+  }
+
+  .review-panel {
+    background: var(--ink-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .review-panel-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 12px;
   }
 
-  .magic-dots span {
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--gold);
-    margin: 0 3px;
-    animation: dotBounce 1.2s ease-in-out infinite;
+  .review-panel-label.yours { color: var(--sage-light); }
+
+  .review-text {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: rgba(245,242,235,0.75);
+    font-family: 'Lora', serif;
   }
 
-  .magic-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .magic-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes dotBounce {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(-5px); opacity: 1; }
+  .final-card {
+    background: var(--ink-mid);
+    border: 1px solid rgba(90,122,106,0.4);
+    border-radius: 12px;
+    padding: 28px;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 20px;
   }
 
-  .turnitin-box {
-    display: none;
-    border-radius: 10px;
-    padding: 22px 24px;
-    text-align: center;
-    border: 1px solid rgba(74,158,110,0.4);
-    background: rgba(74,158,110,0.05);
-    animation: turnitinPulse 2s ease-in-out infinite;
-    margin-bottom: 16px;
+  .final-card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sage-light);
+    margin-bottom: 6px;
   }
 
-  @keyframes turnitinPulse {
-    0%, 100% { box-shadow: 0 0 10px rgba(74,158,110,0.2); border-color: rgba(74,158,110,0.3); }
-    50% { box-shadow: 0 0 20px rgba(74,158,110,0.5); border-color: rgba(74,158,110,0.7); }
-  }
-
-  .turnitin-icon {
-    font-size: 1.3rem;
-    margin-bottom: 8px;
-    display: inline-block;
-    animation: shield 2s ease-in-out infinite;
-  }
-
-  @keyframes shield {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-  }
-
-  .turnitin-text {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1rem;
-    color: var(--success);
-    margin-bottom: 4px;
-  }
-
-  .turnitin-sub {
-    font-size: 0.75rem;
+  .final-hint {
+    font-size: 0.8rem;
     color: var(--muted);
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+    font-style: italic;
   }
 
-  .turnitin-dots span {
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--success);
-    margin: 0 3px;
-    animation: dotBounce 1.2s ease-in-out infinite;
+  .final-textarea {
+    height: 320px;
+    border-color: rgba(90,122,106,0.3);
+    color: var(--cream);
+    font-family: 'Lora', serif;
+    font-size: 0.92rem;
   }
 
-  .turnitin-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .turnitin-dots span:nth-child(3) { animation-delay: 0.4s; }
+  .final-textarea:focus { border-color: var(--sage); }
 
-  .actions {
+  .action-row {
     display: flex;
-    justify-content: center;
     gap: 12px;
+    width: 100%;
+    max-width: 900px;
+    justify-content: flex-end;
   }
 
-  button {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
+  .btn-copy {
+    background: var(--sage);
+    color: var(--white);
     border: none;
     border-radius: 8px;
-    cursor: pointer;
     padding: 12px 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.2s;
   }
 
-  #transformBtn {
-    background: var(--gold);
-    color: var(--navy);
-    min-width: 180px;
-  }
+  .btn-copy:hover { background: var(--sage-light); }
 
-  #transformBtn:hover:not(:disabled) { background: #d4b05a; }
-  #transformBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  #copyBtn {
-    background: var(--navy-light);
-    color: var(--white);
-    border: 1px solid var(--border);
-    display: none;
-  }
-
-  #copyBtn:hover { background: var(--border); }
-
-  .status {
-    text-align: center;
-    margin-top: 16px;
-    font-size: 0.85rem;
+  .btn-restart {
+    background: transparent;
     color: var(--muted);
-    min-height: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
   }
 
-  .status.error { color: var(--error); }
-  .status.success { color: var(--success); }
+  .btn-restart:hover { color: var(--cream); }
 
-  .note {
-    margin-top: 16px;
+  .success-note {
+    background: rgba(90,122,106,0.1);
+    border: 1px solid rgba(90,122,106,0.3);
+    border-radius: 8px;
     padding: 12px 16px;
-    background: rgba(74,158,110,0.08);
-    border: 1px solid rgba(74,158,110,0.2);
-    border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--muted);
     text-align: center;
-    display: none;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 16px;
+    line-height: 1.6;
   }
 
-  .note strong { color: var(--success); }
+  .success-note strong { color: var(--sage-light); }
 
-  footer {
-    margin-top: 40px;
-    color: var(--muted);
-    font-size: 0.78rem;
+  /* Status */
+  .status-msg {
+    font-size: 0.82rem;
+    color: var(--error);
+    margin-top: 8px;
     text-align: center;
-    opacity: 0.6;
+    min-height: 18px;
   }
 
   @media (max-width: 640px) {
-    .panels { grid-template-columns: 1fr; }
-    header h1 { font-size: 1.8rem; }
-    .pass-name { font-size: 0.55rem; }
+    .review-grid { grid-template-columns: 1fr; }
+    .welcome-inner h1 { font-size: 1.7rem; }
+    .page-header h2 { font-size: 1.4rem; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Academic Prose <span>Humanizer</span></h1>
-  <p>Does not modify your text. Reads it, understands the argument, and writes a completely fresh version from scratch. Eight passes. Built to defeat both QuillBot and Turnitin.</p>
-</header>
+<!-- ══════════════════════════════════════
+     SCREEN 1: WELCOME
+════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-inner">
+    <div class="logo-mark">✍</div>
+    <h1>Write It <em>Yourself</em></h1>
+    <p>The only humanizer that works by putting your own words at the center. No AI paraphrasing. No spinning. Your understanding of each paragraph, combined with the original citations, rebuilt into your voice.</p>
+    <p>Turnitin detects AI text. It cannot detect your thoughts.</p>
 
-<div class="card">
-  <div class="panels">
-    <div class="panel">
-      <label>Input Text <span id="wc">0 / 500 words</span></label>
-      <textarea id="inputText" placeholder="Paste your AI-generated academic text here (maximum 500 words)..."></textarea>
-    </div>
-    <div class="panel">
-      <label>Output — Ready to Polish</label>
-      <textarea id="outputText" readonly placeholder="A completely reconstructed version of your argument appears here. Polish the rough edges and submit."></textarea>
-    </div>
-  </div>
-
-  <div class="progress-wrap" id="progressWrap">
-
-    <div class="five-passes" id="fivePasses">
-      <div class="progress-title">Reconstruction Pipeline</div>
-      <div class="passes">
-        <div class="pass">
-          <div class="pass-icon" id="icon1">1</div>
-          <div class="pass-name" id="pname1">Reconstruct</div>
-        </div>
-        <div class="pass-connector" id="conn1"></div>
-        <div class="pass">
-          <div class="pass-icon" id="icon2">2</div>
-          <div class="pass-name" id="pname2">Vocab Audit</div>
-        </div>
-        <div class="pass-connector" id="conn2"></div>
-        <div class="pass">
-          <div class="pass-icon" id="icon3">3</div>
-          <div class="pass-name" id="pname3">Human Voice</div>
-        </div>
-        <div class="pass-connector" id="conn3"></div>
-        <div class="pass">
-          <div class="pass-icon" id="icon4">4</div>
-          <div class="pass-name" id="pname4">Arg. Structure</div>
-        </div>
-        <div class="pass-connector" id="conn4"></div>
-        <div class="pass">
-          <div class="pass-icon" id="icon5">5</div>
-          <div class="pass-name" id="pname5">Final Sweep</div>
-        </div>
+    <div class="how-it-works">
+      <h3>How it works</h3>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-text">Paste your AI-generated text. We split it into paragraphs.</div>
       </div>
-      <div class="five-status" id="fiveStatus">Starting...</div>
-    </div>
-
-    <div class="magic-box" id="magicBox">
-      <div class="magic-stars">✦</div>
-      <div class="magic-text">Magic happening here</div>
-      <div class="magic-sub">Applying the final transformation</div>
-      <div class="magic-dots">
-        <span></span><span></span><span></span>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-text">For each paragraph, <strong>you write 2-3 lines</strong> explaining what it means in your own words.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-text">We combine your words with the original citations and run them through a translation process to give them natural flow.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>You review and edit</strong> the final version. Your edits are the last step. Nothing touches it after you.</div>
       </div>
     </div>
 
-    <div class="turnitin-box" id="turnitinBox">
-      <div class="turnitin-icon">🛡</div>
-      <div class="turnitin-text">Final polish</div>
-      <div class="turnitin-sub">Making the output clean and readable</div>
-      <div class="turnitin-dots">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
-
+    <button class="btn-primary" onclick="showScreen('screen-paste')">Get Started</button>
   </div>
-
-  <div class="actions">
-    <button id="transformBtn" onclick="transform()">Reconstruct Text</button>
-    <button id="copyBtn" onclick="copyOutput()">Copy Output</button>
-  </div>
-
-  <div class="note" id="note">
-    <strong>Done.</strong> Eight passes complete. The argument has been fully reconstructed. Read through, smooth any rough edges, and submit.
-  </div>
-
-  <div class="status" id="status"></div>
 </div>
 
-<footer>Powered by Claude</footer>
+<!-- ══════════════════════════════════════
+     SCREEN 2: PASTE TEXT
+════════════════════════════════════════ -->
+<div id="screen-paste" class="screen">
+  <div class="page-header">
+    <h2>Paste your text</h2>
+    <p>Paste the AI-generated academic text below. Maximum 5 paragraphs. We will take it one paragraph at a time.</p>
+  </div>
+
+  <div class="paste-card">
+    <div class="field-label">
+      Your AI-generated text
+      <span id="paraCount">0 paragraphs detected</span>
+    </div>
+    <textarea class="paste-textarea" id="pasteInput" placeholder="Paste your text here. Separate paragraphs with a blank line..."></textarea>
+
+    <div class="status-msg" id="pasteStatus"></div>
+
+    <button class="btn-primary" onclick="startParagraphs()" style="margin-top:4px">
+      Start Paragraph by Paragraph
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 3: PARAGRAPH REVIEW
+════════════════════════════════════════ -->
+<div id="screen-paragraphs" class="screen">
+
+  <div class="progress-track">
+    <div class="progress-top">
+      <div class="progress-label">Paragraph <strong id="progCurrent">1</strong> of <strong id="progTotal">5</strong></div>
+      <div class="progress-dots" id="progDots"></div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="para-card">
+    <div class="para-card-label">Original paragraph — read carefully</div>
+    <div class="para-original" id="paraOriginal"></div>
+
+    <div class="understanding-label">Now write it in your own words</div>
+    <div class="understanding-hint">Do not copy the original. Write 2-3 lines explaining what this paragraph is saying, as if you are telling a colleague. Use simple, direct language. Do not worry about academic tone — that comes later.</div>
+    <textarea class="understanding-textarea" id="understandingInput" placeholder="In my own words, this paragraph is saying that..."></textarea>
+    <div class="char-hint" id="charHint">0 words</div>
+
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goBack()" id="backBtn">Back</button>
+      <button class="btn-next" onclick="nextParagraph()" id="nextBtn">Next Paragraph</button>
+    </div>
+  </div>
+
+  <div class="status-msg" id="paraStatus"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 4: PROCESSING
+════════════════════════════════════════ -->
+<div id="screen-processing" class="screen">
+  <div class="processing-inner">
+    <div class="processing-orb">✦</div>
+    <h2>Building your version</h2>
+    <div class="processing-step" id="processingStep">Combining your understanding with the citations...</div>
+    <div class="processing-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 5: REVIEW AND EDIT
+════════════════════════════════════════ -->
+<div id="screen-review" class="screen">
+  <div class="page-header">
+    <h2>Your version — review and edit</h2>
+    <p>This was built from your own understanding. Read it carefully. Change anything that does not sound like you. Your edits are the final step — nothing touches this after you.</p>
+  </div>
+
+  <div class="review-grid" id="reviewGrid"></div>
+
+  <div class="final-card">
+    <div class="final-card-label">Your final version — edit directly</div>
+    <div class="final-hint">This is your text now. Edit freely. Fix any awkward phrasing. Add your voice. When you are happy with it, copy and submit.</div>
+    <textarea class="final-textarea" id="finalOutput"></textarea>
+  </div>
+
+  <div class="success-note">
+    <strong>Important:</strong> This version was built from your own words. Edit it until it sounds exactly like you. The more you change, the more it becomes yours.
+  </div>
+
+  <div class="action-row">
+    <button class="btn-restart" onclick="restart()">Start Over</button>
+    <button class="btn-copy" onclick="copyFinal()">Copy Final Text</button>
+  </div>
+</div>
 
 <script>
-  const inputEl = document.getElementById('inputText');
-  const outputEl = document.getElementById('outputText');
-  const wcEl = document.getElementById('wc');
-  const statusEl = document.getElementById('status');
-  const transformBtn = document.getElementById('transformBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const progressWrap = document.getElementById('progressWrap');
-  const fivePasses = document.getElementById('fivePasses');
-  const magicBox = document.getElementById('magicBox');
-  const turnitinBox = document.getElementById('turnitinBox');
-  const fiveStatus = document.getElementById('fiveStatus');
-  const noteEl = document.getElementById('note');
+  // ── STATE ──
+  let paragraphs = [];
+  let understandings = [];
+  let currentPara = 0;
+  let totalParas = 0;
 
-  const PASS_NAMES = [
-    'Reconstruct', 'Vocab Audit', 'Human Voice',
-    'Argument Structure', 'Final Sweep',
-    'Magic 1', 'Magic 2', 'Final Polish'
-  ];
+  // ── SCREEN MANAGEMENT ──
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
 
-  inputEl.addEventListener('input', () => {
-    const words = countWords(inputEl.value);
-    wcEl.textContent = words + ' / 500 words';
-    wcEl.style.color = words > 500 ? 'var(--error)' : 'var(--gold)';
+  // ── SCREEN 2: PASTE ──
+  const pasteInput = document.getElementById('pasteInput');
+  const paraCountEl = document.getElementById('paraCount');
+
+  pasteInput.addEventListener('input', () => {
+    const paras = extractParagraphs(pasteInput.value);
+    paraCountEl.textContent = paras.length + ' paragraph' + (paras.length !== 1 ? 's' : '') + ' detected';
+    paraCountEl.style.color = paras.length > 5 ? 'var(--error)' : 'var(--gold)';
   });
 
-  function countWords(text) {
-    return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  function extractParagraphs(text) {
+    return text.split(/\n\s*\n/)
+      .map(p => p.trim())
+      .filter(p => p.length > 30);
   }
 
-  function setPassState(num, state) {
-    const icon = document.getElementById('icon' + num);
-    const name = document.getElementById('pname' + num);
-    const conn = document.getElementById('conn' + num);
-    if (!icon) return;
-    icon.className = 'pass-icon' + (state ? ' ' + state : '');
-    name.className = 'pass-name' + (state ? ' ' + state : '');
-    if (conn && state === 'done') conn.className = 'pass-connector done';
-  }
-
-  function hideAll() {
-    magicBox.style.display = 'none';
-    turnitinBox.style.display = 'none';
-    fivePasses.style.display = 'none';
-  }
-
-  function resetAll() {
-    for (let i = 1; i <= 5; i++) {
-      setPassState(i, '');
-      const conn = document.getElementById('conn' + i);
-      if (conn) conn.className = 'pass-connector';
+  function startParagraphs() {
+    const text = pasteInput.value.trim();
+    if (!text) {
+      document.getElementById('pasteStatus').textContent = 'Please paste some text first.';
+      return;
     }
-    fiveStatus.innerHTML = 'Starting...';
-    fiveStatus.style.color = '';
-    hideAll();
-    fivePasses.style.display = 'block';
-    noteEl.style.display = 'none';
+    const paras = extractParagraphs(text);
+    if (paras.length === 0) {
+      document.getElementById('pasteStatus').textContent = 'No paragraphs detected. Separate paragraphs with a blank line.';
+      return;
+    }
+    if (paras.length > 5) {
+      document.getElementById('pasteStatus').textContent = 'Maximum 5 paragraphs. Please trim your text.';
+      return;
+    }
+
+    paragraphs = paras;
+    understandings = new Array(paras.length).fill('');
+    totalParas = paras.length;
+    currentPara = 0;
+
+    buildProgressDots();
+    loadParagraph(0);
+    showScreen('screen-paragraphs');
   }
 
-  async function runPass(text, passNum) {
+  // ── SCREEN 3: PARAGRAPHS ──
+  function buildProgressDots() {
+    const dotsEl = document.getElementById('progDots');
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < totalParas; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'prog-dot';
+      dot.id = 'dot-' + i;
+      dotsEl.appendChild(dot);
+    }
+  }
+
+  function updateProgress(idx) {
+    document.getElementById('progCurrent').textContent = idx + 1;
+    document.getElementById('progTotal').textContent = totalParas;
+    document.getElementById('progBar').style.width = ((idx / totalParas) * 100) + '%';
+    for (let i = 0; i < totalParas; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'prog-dot' + (i < idx ? ' done' : i === idx ? ' active' : '');
+    }
+    document.getElementById('backBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.textContent = idx === totalParas - 1 ? 'Build My Version' : 'Next Paragraph';
+  }
+
+  function loadParagraph(idx) {
+    document.getElementById('paraOriginal').textContent = paragraphs[idx];
+    const input = document.getElementById('understandingInput');
+    input.value = understandings[idx] || '';
+    updateWordCount(input.value);
+    updateProgress(idx);
+    document.getElementById('paraStatus').textContent = '';
+    input.focus();
+  }
+
+  const understandingInput = document.getElementById('understandingInput');
+  understandingInput.addEventListener('input', () => {
+    updateWordCount(understandingInput.value);
+    understandings[currentPara] = understandingInput.value;
+  });
+
+  function updateWordCount(text) {
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    document.getElementById('charHint').textContent = words + ' words';
+  }
+
+  function nextParagraph() {
+    const understanding = understandingInput.value.trim();
+    if (understanding.length < 10) {
+      document.getElementById('paraStatus').textContent = 'Please write at least a sentence about what this paragraph means.';
+      return;
+    }
+    understandings[currentPara] = understanding;
+
+    if (currentPara < totalParas - 1) {
+      currentPara++;
+      loadParagraph(currentPara);
+    } else {
+      processAll();
+    }
+  }
+
+  function goBack() {
+    if (currentPara > 0) {
+      understandings[currentPara] = understandingInput.value;
+      currentPara--;
+      loadParagraph(currentPara);
+    }
+  }
+
+  // ── SCREEN 4: PROCESSING ──
+  async function processAll() {
+    showScreen('screen-processing');
+
+    const steps = [
+      'Combining your understanding with the citations...',
+      'Translating to conversational Farsi...',
+      'Translating back to natural English...',
+      'Assembling your final version...'
+    ];
+
+    let stepIdx = 0;
+    const stepEl = document.getElementById('processingStep');
+
+    const stepTimer = setInterval(() => {
+      stepIdx = (stepIdx + 1) % steps.length;
+      stepEl.innerHTML = steps[stepIdx];
+    }, 3500);
+
+    try {
+      const results = [];
+
+      for (let i = 0; i < paragraphs.length; i++) {
+        stepEl.innerHTML = 'Working on paragraph ' + (i + 1) + ' of ' + paragraphs.length + '...';
+
+        const citations = extractCitations(paragraphs[i]);
+        const combined = await combineAndTransform(paragraphs[i], understandings[i], citations);
+        results.push(combined);
+      }
+
+      clearInterval(stepTimer);
+      showReview(results);
+
+    } catch (err) {
+      clearInterval(stepTimer);
+      stepEl.innerHTML = 'Something went wrong. Please go back and try again.';
+      console.error(err);
+    }
+  }
+
+  function extractCitations(text) {
+    const citationPattern = /\(([^)]+(?:\d{4}[^)]*)?)\)/g;
+    const matches = [];
+    let match;
+    while ((match = citationPattern.exec(text)) !== null) {
+      if (/\d{4}/.test(match[1])) {
+        matches.push(match[0]);
+      }
+    }
+    return [...new Set(matches)];
+  }
+
+  async function combineAndTransform(original, understanding, citations) {
+    const citationStr = citations.length > 0 ? citations.join(', ') : '';
+
+    const step1 = await callAPI(
+      `You are an academic writing assistant. A researcher has read a paragraph and written their own understanding of it in plain words. Your job is to combine their understanding with the academic citations from the original paragraph to produce a new academic paragraph.
+
+RULES:
+- Use the researcher's own words and ideas as the foundation
+- Weave in the citations from the original paragraph naturally
+- Write in clear, direct academic prose
+- Do not copy phrases from the original paragraph
+- Do not use: em dashes, "moreover", "furthermore", "it is evident", "epistemic", "underscores", "delve", "paramount", "utilize"
+- Vary sentence length, mix short and long sentences
+- The paragraph should sound like a specific thinking person wrote it, not a template
+- Maximum 150 words
+
+Citations to include: ${citationStr}`,
+      `Original paragraph (for citations only, do not copy its phrasing):
+${original}
+
+Researcher's understanding in their own words:
+${understanding}
+
+Write a new academic paragraph based on the researcher's understanding, including the citations.`
+    );
+
+    const step2 = await callAPI(
+      `You are a translator. Translate the following English academic text into Farsi.
+
+RULES:
+- Translate into natural, conversational spoken Farsi, not formal written Farsi
+- Make it sound like someone explaining this to a colleague in Persian
+- Keep all citations exactly as they appear, do not translate author names or years
+- Do not add or remove ideas`,
+      `Translate to conversational Farsi:\n\n${step1}`
+    );
+
+    const step3 = await callAPI(
+      `You are translating Farsi text back into English. You are a Farsi native speaker who learned English mostly by reading. Your English is functional but not perfectly native.
+
+RULES:
+- Translate the meaning accurately but imperfectly
+- Sometimes forget "the" or "a" before nouns
+- Use simpler words than a native academic writer would choose
+- Sometimes connect ideas with "and" or "but" instead of more sophisticated connectors
+- Occasionally a sentence is slightly awkward or runs a little long
+- Never use em dashes
+- Keep all citations exactly as they appear
+- The text must be understandable but not polished
+
+Return only the back-translated English.`,
+      `Translate this Farsi back to English:\n\n${step2}`
+    );
+
+    return step3;
+  }
+
+  async function callAPI(systemPrompt, userMessage) {
     const response = await fetch('/api/transform', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, pass: passNum })
+      body: JSON.stringify({
+        text: userMessage,
+        pass: 99,
+        systemOverride: systemPrompt
+      })
     });
     const data = await response.json();
     if (data.error) throw new Error(data.error);
     return data.result;
   }
 
-  async function transform() {
-    const input = inputEl.value.trim();
-    if (!input) {
-      setStatus('Please paste some text first.', 'error');
-      return;
-    }
-    if (countWords(input) > 500) {
-      setStatus('Please reduce your text to 500 words or fewer.', 'error');
-      return;
-    }
+  // ── SCREEN 5: REVIEW ──
+  function showReview(results) {
+    const grid = document.getElementById('reviewGrid');
+    grid.innerHTML = '';
 
-    transformBtn.disabled = true;
-    copyBtn.style.display = 'none';
-    outputEl.value = '';
-    progressWrap.style.display = 'block';
-    resetAll();
-    setStatus('');
+    understandings.forEach((u, i) => {
+      const panel = document.createElement('div');
+      panel.className = 'review-panel';
+      panel.innerHTML = `
+        <div class="review-panel-label">Your words — Paragraph ${i + 1}</div>
+        <div class="review-text">${escapeHtml(u)}</div>
+      `;
+      grid.appendChild(panel);
 
-    let current = input;
+      const panel2 = document.createElement('div');
+      panel2.className = 'review-panel';
+      panel2.innerHTML = `
+        <div class="review-panel-label yours">Built version — Paragraph ${i + 1}</div>
+        <div class="review-text">${escapeHtml(results[i])}</div>
+      `;
+      grid.appendChild(panel2);
+    });
 
-    try {
-      for (let pass = 1; pass <= 5; pass++) {
-        setPassState(pass, 'active');
-        fiveStatus.innerHTML = 'Pass ' + pass + ' of 5 — <strong style="color:var(--gold)">' + PASS_NAMES[pass-1] + '</strong>';
-        current = await runPass(current, pass);
-        setPassState(pass, 'done');
-      }
+    const combined = results.join('\n\n');
+    document.getElementById('finalOutput').value = combined;
 
-      fiveStatus.innerHTML = 'Five passes complete.';
-      fiveStatus.style.color = 'var(--success)';
-
-      hideAll();
-      magicBox.style.display = 'block';
-      current = await runPass(current, 6);
-      current = await runPass(current, 7);
-
-      hideAll();
-      turnitinBox.style.display = 'block';
-      current = await runPass(current, 8);
-
-      hideAll();
-      fivePasses.style.display = 'block';
-      fiveStatus.innerHTML = 'All eight passes complete.';
-      fiveStatus.style.color = 'var(--success)';
-
-      outputEl.value = current;
-      noteEl.style.display = 'block';
-      copyBtn.style.display = 'inline-block';
-
-    } catch (err) {
-      setStatus('Something went wrong: ' + err.message, 'error');
-      hideAll();
-      fivePasses.style.display = 'block';
-      console.error(err);
-    } finally {
-      transformBtn.disabled = false;
-    }
+    showScreen('screen-review');
   }
 
-  function copyOutput() {
-    navigator.clipboard.writeText(outputEl.value).then(() => {
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => { copyBtn.textContent = 'Copy Output'; }, 2000);
+  function escapeHtml(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function copyFinal() {
+    const text = document.getElementById('finalOutput').value;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.btn-copy');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Final Text'; }, 2000);
     });
   }
 
-  function setStatus(msg, type) {
-    statusEl.className = 'status' + (type ? ' ' + type : '');
-    statusEl.textContent = msg;
+  function restart() {
+    paragraphs = [];
+    understandings = [];
+    currentPara = 0;
+    totalParas = 0;
+    pasteInput.value = '';
+    paraCountEl.textContent = '0 paragraphs detected';
+    document.getElementById('pasteStatus').textContent = '';
+    showScreen('screen-welcome');
   }
 </script>
 </body>
